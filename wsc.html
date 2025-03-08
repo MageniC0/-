@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<!-- v 0.0.3 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>制作链接站</title>
+<style>
+    :root {
+        --text: #003366;
+        --white: #ffffff;
+        --btn-radius: 6px;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: "SimHei", sans-serif; 
+    }
+
+    .toolbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        font-family: "SimHei", sans-serif; /* 修改为黑体 */
+    }
+
+    #editor {
+        width: 100%;
+        height: calc(100vh - 80px);
+        margin-top: 80px;
+        padding: 20px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-family: "SimHei", monospace; 
+        white-space: pre;
+    }
+
+    button {
+        padding: 8px 16px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: var(--btn-radius);
+        background: var(--white);
+        transition: all 0.3s;
+        font-family: "SimHei", sans-serif; 
+    }
+
+    .save-box {
+        margin-left: auto;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-family: "SimHei", sans-serif; 
+    }
+
+    #filename {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+        font-family: "SimHei", sans-serif; 
+    }
+
+    summary {
+        list-style: none;
+        font-family: "SimHei", sans-serif; 
+    }
+
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
+    summary::before {
+        content: "+";
+        margin-right: 8px;
+        width: 15px;
+        display: inline-block;
+        font-family: "SimHei", sans-serif; 
+    }
+
+    details[open] > summary::before {
+        content: "-";
+    }
+
+    input, textarea {
+        font-family: "SimHei", sans-serif; 
+    }
+</style>
+
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="insertSymbol(' [ ')">[</button>
+        <button onclick="insertSymbol(']')">]</button>
+        <button onclick="insertSymbol(' = ')">=</button>
+        <button onclick="insertSymbol('/')">/</button>
+        <div class="save-box">
+            <input type="text" id="filename" placeholder="文件名" value="links">
+            <button onclick="exportHTML()">导出</button>
+        </div>
+    </div>
+
+    <textarea id="editor" placeholder="在此输入..."></textarea>
+
+<script>
+class Node {
+    constructor(title) {
+        this.title = title;
+        this.sections = [];
+        this.links = [];
+    }
+
+    addSection(section) {
+        this.sections.push(section);
+    }
+
+    addLink(text, href) {
+        this.links.push({ text, href });
+    }
+
+    toHTML(level = 0) {
+        const indent = "  ".repeat(level * 2);
+        let html = `${indent}<details${level === 0 ? ' open' : ''}>\n`;
+        html += `${indent}  <summary>${this.title}</summary>\n`;
+
+        if (this.sections.length) {
+            html += `${indent}  <div style="margin-left:20px">\n`;
+            this.sections.forEach(section => html += section.toHTML(level + 1));
+            html += `${indent}  </div>\n`;
+        }
+
+        if (this.links.length) {
+            html += `${indent}  <div class="links">\n`;
+            this.links.forEach(({ text, href }) => {
+                html += `${indent}    ${href === '/' 
+                    ? `<p>${text}</p>` 
+                    : `<a href="${href}" style="display:block;padding:3px 0;color:var(--text);text-decoration:none" target="_blank">${text}</a>`}\n`;
+            });
+            html += `${indent}  </div>\n`;
+        }
+
+        return html + `${indent}</details>\n`;
+    }
+}
+
+function handleIndent(e) {
+    if (e.key !== 'Enter') return;
+
+    e.preventDefault();
+    const editor = e.target;
+    const pos = editor.selectionStart;
+    const text = editor.value;
+    const currentLine = text.substring(0, pos).split('\n').pop();
+
+    let indent = currentLine.match(/^\s*/)[0];
+    if (currentLine.trimEnd().endsWith('[')) {
+        indent += '  ';
+    } else if (currentLine.trimEnd().endsWith(']')) {
+        indent = indent.slice(0, -2);
+    }
+
+    const newText = '\n' + indent;
+    editor.value = text.substring(0, pos) + newText + text.substring(pos);
+    editor.selectionStart = editor.selectionEnd = pos + newText.length;
+}
+
+function insertSymbol(symbol) {
+    const editor = document.getElementById('editor');
+    const pos = editor.selectionStart;
+    const text = editor.value;
+
+    editor.value = text.substring(0, pos) + symbol + text.substring(pos);
+    editor.focus();
+    editor.selectionStart = editor.selectionEnd = pos + symbol.length;
+}
+
+function parseDefinition(def) {
+    const stack = [new Node("链接站")];
+    def.split("\n").forEach(line => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return;
+
+        if (trimmedLine.endsWith("[")) {
+            const node = new Node(trimmedLine.slice(0, -1).trim());
+            stack[stack.length - 1].addSection(node);
+            stack.push(node);
+        } else if (trimmedLine === "]") {
+            if (stack.length > 1) stack.pop();
+        } else if (trimmedLine.includes("=")) {
+            const [text, href] = trimmedLine.split("=").map(s => s.trim());
+            stack[stack.length - 1].addLink(text, href);
+        }
+    });
+    return stack[0];
+}
+
+function exportHTML() {
+    const root = parseDefinition(document.getElementById('editor').value);
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${root.title}</title>
+    <style>
+:root { --primary: #003366; --hover: #002244; } 
+body { background: white; color: var(--text); padding: 20px; } 
+details { margin: 5px 0; } 
+summary { cursor: pointer; padding: 3px 0; list-style: none; color: var(--primary); } 
+summary::-webkit-details-marker { display: none; } 
+summary::before { content: "+"; margin-right: 8px; display: inline-block; width: 15px; color: var(--primary); } 
+details[open] > summary::before { content: "-"; } 
+.links { margin-top: 5px; } 
+a { display: block; padding: 3px 0; color: var(--primary); text-decoration: none; } 
+a:hover { color: var(--hover); text-decoration: underline; }
+    </style>
+</head>
+<body>
+    ${root.toHTML()}
+</body>
+</html>`;
+
+    let filename = document.getElementById('filename').value.trim() || '链接站';
+    filename = filename.replace(/\.html$/g, '') + '.html';
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+}
+
+document.getElementById('editor').addEventListener('keydown', handleIndent);
+</script>
+</body>
+</html>
