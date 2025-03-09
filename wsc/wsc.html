@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- v 0.0.3 -->
+<!-- v 0.0.4 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>制作链接站</title>
+    <title>WSC</title>
 <style>
     :root {
         --text: #003366;
@@ -31,7 +31,7 @@
         display: flex;
         gap: 15px;
         align-items: center;
-        font-family: "SimHei", sans-serif; /* 修改为黑体 */
+        font-family: "SimHei", sans-serif;
     }
 
     #editor {
@@ -214,16 +214,50 @@ function exportHTML() {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${root.title}</title>
     <style>
-:root { --primary: #003366; --hover: #002244; } 
-body { background: white; color: var(--text); padding: 20px; } 
-details { margin: 5px 0; } 
-summary { cursor: pointer; padding: 3px 0; list-style: none; color: var(--primary); } 
-summary::-webkit-details-marker { display: none; } 
-summary::before { content: "+"; margin-right: 8px; display: inline-block; width: 15px; color: var(--primary); } 
-details[open] > summary::before { content: "-"; } 
-.links { margin-top: 5px; } 
-a { display: block; padding: 3px 0; color: var(--primary); text-decoration: none; } 
-a:hover { color: var(--hover); text-decoration: underline; }
+        :root {
+            --primary: #003366;
+            --hover: #002244; 
+        } 
+        body {
+            background: white;
+            color: var(--text);
+            padding: 20px;
+        } 
+        details { 
+            margin: 5px 0; 
+        } 
+        summary { 
+            cursor: pointer; 
+            padding: 3px 0; 
+            list-style: none; 
+            color: var(--primary); 
+        } 
+        summary::-webkit-details-marker { 
+            display: none; 
+        } 
+        summary::before { 
+            content: "+"; 
+            margin-right: 8px; 
+            display: inline-block; 
+            width: 15px; 
+            color: var(--primary); 
+        } 
+        details[open] > summary::before { 
+            content: "-"; 
+        } 
+        .links { 
+            margin-top: 5px; 
+        } 
+        a { 
+            display: block; 
+            padding: 3px 0; 
+            color: var(--primary); 
+            text-decoration: none; 
+        } 
+        a:hover { 
+            color: var(--hover); 
+            text-decoration: underline; 
+        }
     </style>
 </head>
 <body>
