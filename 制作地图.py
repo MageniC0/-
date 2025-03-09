@@ -1,4 +1,9 @@
-import json
+import json, re
+help = """[help]
+set [x] [y] [z]: 在(x, y, z)放置方块
+cube [n]: 指定要放置的方块
+done: 完成编辑
+"""
 
 name = input("地图的文件名_")
 block = []
@@ -17,3 +22,10 @@ def save():
     with open(name, "w") as f:
         json.dump(block, f)
 
+while True:
+    ln = input("_")
+    if ln == "":
+        break
+    # elif ...
+    else:
+        print(help)
