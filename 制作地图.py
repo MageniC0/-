@@ -52,16 +52,17 @@ class Mon:
 class Starlit:
     def __init__(self):
         self._block = Block()
-        self._mon = Mon(self._block)  # 传入block实例
+        self._mon = Mon(self._block)
         self.ln = ""
-        self.help = """[help]
+        self.help = """[help]____________________________
 load [name]: 导入地图
 new [name]: 新建地图
 draw [n]: 设置的笔刷
-point [x][y][z]: 放置/移除方块(自动保存)
+point [x][y][z]: 放置/移除方块
 clean: 删除模式/取消删除模式
 done: 退出程序
 output [name]: 导出
+__________________________________
 """
     
     def main(self):
