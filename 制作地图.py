@@ -20,7 +20,6 @@ class Block:
         self.save()
     
     def save(self):
-        print(self.name)
         with open(self.name, "w") as f:
             json.dump(self.block, f)
     
