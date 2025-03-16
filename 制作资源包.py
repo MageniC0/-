@@ -1,3 +1,4 @@
+#打开一个图片，然后转化为资源包
 from PIL import Image
 import json
 
