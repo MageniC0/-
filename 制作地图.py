@@ -6,15 +6,15 @@ class Block:
         self.block = []
         self.name = ""
     
+    def set_name(self, name):
+        self.name = "tr/" + name
+
     def load(self):
         with open(self.name, "r") as f:
             self.block = json.load(f)
     
     def new(self):
         self.block = [[[0 for x in range(4)] for y in range(4)] for z in range(4)]
-    
-    def set_name(self, name):
-        self.name = "tr/" + name
     
     def done(self):
         print(f"已将地图保存至{self.name}")
@@ -28,21 +28,12 @@ class Mon:
         self.draw_ = n
 
     def clean(self):
-        if self.clean_ == 0:
-            self.clean_ = 1
-        else: 
-            self.clean_ = 0
-
-
-
-
-
-
-
-
+        self.clean_ = 1 - self.clean_
 
 class Starlit:
     def __init__(self):
+        self._block = Block()
+        self._mon = Mon()
         self.ln = ""
         self.help = """[help]
         load [name]: 编辑已有地图
@@ -54,27 +45,27 @@ class Starlit:
         output [name]: 另存文件
         """
 
-    def load():
-        pass
+    def load(self, name):
+        self._block.load(name)
 
-    def new():
-        pass
+    def new(self, name):
+        self._block.new(name)
 
-    def draw():
-        pass
+    def draw(self, n):
+        self._mon.draw(n)
 
-    def point():
-        pass
+    def point(self, x, y, z):
+        self._mon.set(x, y, z)
 
-    def clean():
-        pass
+    def clean(self):
+        self._mon.clean()
 
-    def done():
-        pass
+    def done(self):
+        self._block.done()
 
-    def output():
-        pass
-    
+    def output(self):
+        self._mon.output()
+
     def main(self):
         while True:
             self.ln = input("_")
@@ -96,3 +87,6 @@ class Starlit:
                 self.output(me.group(1))
             else:
                 print(help)
+
+_tr = Starlit()
+_tr.main()
