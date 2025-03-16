@@ -20,12 +20,12 @@ class Block:
         self.save()
     
     def save(self):
+        print(self.name)
         with open(self.name, "w") as f:
             json.dump(self.block, f)
     
     def output(self, name):
-        self.set_name(name)
-        with open(self.name, "w") as f:
+        with open(name, "w") as f:
             json.dump(self.block, f)
     
     def done(self):
@@ -35,16 +35,17 @@ class Mon:
     def __init__(self, block):
         self.draw_ = 0
         self.clean_ = 0
-        self.block = block
+        self.block_ = block
     
     def draw(self, n):
         self.draw_ = n
     
     def point(self, x, y, z):
         if self.clean_:
-            self.block.block[z][y][x] = 0
+            self.block_.block[z][y][x] = 0
         else:
-            self.block.block[z][y][x] = self.draw_
+            self.block_.block[z][y][x] = self.draw_
+        self.block_.save()
     
     def clean(self):
         self.clean_ = 1 - self.clean_
