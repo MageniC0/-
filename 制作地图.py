@@ -10,12 +10,11 @@ class Block:
         self.name = "tr/" + name + ".json"
     
     def load(self, name):
-        self.name = self.set_name(name)
+        self.set_name(name)
         with open(self.name, "r") as f:
             self.block = json.load(f)
     
     def new(self, name):
-        self.name = self.set_name(name)
         self.set_name(name)
         self.block = [[[0 for _ in range(4)] for _ in range(4)] for _ in range(4)]
         self.save()
