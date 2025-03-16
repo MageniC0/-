@@ -10,7 +10,7 @@ for y in range(4):
         for j in range(13):
             n = 4 * y + x
             for i in range(13):
-                graph[n][j][i] = image.getpixel((16 * y + j, 16 * x + i))
+                graph[n][j][i] = image.getpixel((16 * x + i, 16 * y + j))
 
 with open("chc/laer.json", "w") as f:
     json.dump(graph, f)
