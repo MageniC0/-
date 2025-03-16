@@ -51,24 +51,27 @@ class Mon:
 
 
 
-
-while True:
-    ln = input("_")
-    if ln == "":
-        break
-    elif me := re.match(r"load (\w+)", ln):
-        Block.load(me.group(1))
-    elif me := re.match(r"new (\w+)", ln):
-        Block.new(me.group(1))
-    elif me := re.match(r"draw (\d+)", ln):
-        Mon.draw(int(group(1)))
-    elif me := re.match(r"point (\d+) (\d+) (\d+)", ln):
-        Mon.point(int(me.group(1)), int(me.group(2)), int(me.group(3)))
-    elif ln == "clean": 
-        Mon.clean()
-    elif ln == "done":
-        Block.done()
-    elif me := re.match(r"output (\w+)", ln):
-        Block.output(me.group(1))
-    else:
-        print(help)
+class Starlit:
+    def __init__(self):
+        self.ln = ""
+    def main(self):
+        while True:
+            self.ln = input("_")
+            if self.ln == "":
+                break
+            elif me := re.match(r"load (\w+)", ln):
+                Mon.load(me.group(1))
+            elif me := re.match(r"new (\w+)", ln):
+                Mon.new(me.group(1))
+            elif me := re.match(r"draw (\d+)", ln):
+                Mon.draw(int(me.group(1)))
+            elif me := re.match(r"point (\d+) (\d+) (\d+)", ln):
+                Mon.point(int(me.group(1)), int(me.group(2)), int(me.group(3)))
+            elif ln == "clean": 
+                Mon.clean()
+            elif ln == "done":
+                Mon.done()
+            elif me := re.match(r"output (\w+)", ln):
+                Mon.output(me.group(1))
+            else:
+                print(help)
