@@ -17,7 +17,7 @@ while True:
     ln = input("_")
     if ln == "":
         break
-    elif me := re.match(r"check (/d+) (/d+) (/d+)", ln):
+    elif me := re.match(r"check (\d+) (\d+) (\d+)", ln):
         check(int(me.group(1)), int(me.group(2)), int(me.group(3)))
     else:
         print(help)
