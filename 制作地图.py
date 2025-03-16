@@ -7,86 +7,86 @@ class Block:
         self.name = ""
     
     def set_name(self, name):
-        self.name = "tr/" + name
-
+        self.name = "tr/" + name + ".json"
+    
     def load(self):
         with open(self.name, "r") as f:
             self.block = json.load(f)
     
-    def new(self):
-        self.block = [[[0 for x in range(4)] for y in range(4)] for z in range(4)]
+    def new(self, name):
+        self.set_name(name)
+        self.block = [[[0 for _ in range(4)] for _ in range(4)] for _ in range(4)]
+        self.save()
+    
+    def save(self):
+        with open(self.name, "w") as f:
+            json.dump(self.block, f)
+    
+    def output(self, name):
+        self.set_name(name)
+        with open(self.name, "w") as f:
+            json.dump(self.block, f)
     
     def done(self):
-        print(f"已将地图保存至{self.name}")
+        print(f"地图保存至{self.name}")
 
 class Mon:
-    def __init__(self):
+    def __init__(self, block):
         self.draw_ = 0
         self.clean_ = 0
-
+        self.block = block
+    
     def draw(self, n):
         self.draw_ = n
-
+    
+    def point(self, x, y, z):
+        if self.clean_:
+            self.block.block[z][y][x] = 0
+        else:
+            self.block.block[z][y][x] = self.draw_
+    
     def clean(self):
         self.clean_ = 1 - self.clean_
 
 class Starlit:
     def __init__(self):
         self._block = Block()
-        self._mon = Mon()
+        self._mon = Mon(self._block)  # 传入block实例
         self.ln = ""
         self.help = """[help]
-        load [name]: 编辑已有地图
-        new [name]: 新建地图
-        draw [n]: 指定要放置的方块
-        point [x] [y] [z]: 在指定位置放置或删除方块
-        clean: 删除模式或取消删除模式
-        done: 完成编辑
-        output [name]: 另存文件
-        """
-
-    def load(self, name):
-        self._block.load(name)
-
-    def new(self, name):
-        self._block.new(name)
-
-    def draw(self, n):
-        self._mon.draw(n)
-
-    def point(self, x, y, z):
-        self._mon.set(x, y, z)
-
-    def clean(self):
-        self._mon.clean()
-
-    def done(self):
-        self._block.done()
-
-    def output(self):
-        self._mon.output()
-
+load [name]: 导入地图
+new [name]: 新建地图
+draw [n]: 设置的笔刷
+point [x][y][z]: 放置/移除方块(自动保存)
+clean: 删除模式/取消删除模式
+done: 退出程序
+output [name]: 导出
+"""
+    
     def main(self):
         while True:
-            self.ln = input("_")
-            if self.ln == "":
-                break
-            elif me := re.match(r"load (\w+)", self.ln):
-                self.load(me.group(1))
-            elif me := re.match(r"new (\w+)", self.ln):
-                self.new(me.group(1))
-            elif me := re.match(r"draw (\d+)", self.ln):
-                self.draw(int(me.group(1)))
-            elif me := re.match(r"point (\d+) (\d+) (\d+)", self.ln):
-                self.point(int(me.group(1)), int(me.group(2)), int(me.group(3)))
-            elif self.ln == "clean": 
-                self.clean()
+            self.ln = input("_").strip()
+            if not self.ln:
+                continue
+            
+            if cmd := re.match(r"load (\w+)", self.ln):
+                self._block.load(cmd.group(1))
+            elif cmd := re.match(r"new (\w+)", self.ln):
+                self._block.new(cmd.group(1))
+            elif cmd := re.match(r"draw (\d+)", self.ln):
+                self._mon.draw(int(cmd.group(1)))
+            elif cmd := re.match(r"point (\d+) (\d+) (\d+)", self.ln):
+                x, y, z = map(int, cmd.groups())
+                self._mon.point(x, y, z)
+            elif self.ln == "clean":
+                self._mon.clean()
             elif self.ln == "done":
-                self.done()
-            elif me := re.match(r"output (\w+)", self.ln):
-                self.output(me.group(1))
+                self._block.done()
+                break
+            elif cmd := re.match(r"output (\w+)", self.ln):
+                self._block.output(cmd.group(1))
             else:
-                print(help)
+                print(self.help)
 
 _tr = Starlit()
 _tr.main()
