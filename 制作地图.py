@@ -31,7 +31,7 @@ while True:
     if ln == "":
         break
     elif me := re.match(r"load (\w+)", ln):
-        help(me.group(1))
+        load(me.group(1))
     elif me := re.match(r"new (\w+)", ln):
         new(me.group(1))
     elif me := re.match(r"set (\d+) (\d+) (\d+)", ln):
