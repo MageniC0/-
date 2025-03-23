@@ -1,5 +1,3 @@
-import copy
-
 block_pixels = [[[[[[0, 0, 0, 0] for u in range(13)] for v in range(13)] for x in range(4)] for y in range(4)] for z in range(4)]  # I
 graph = [[[0, 0, 0, 0] for i in range(49)] for j in range(49)]  # O
 
