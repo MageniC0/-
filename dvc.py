@@ -13,12 +13,14 @@ output [name] : 制作
 '''
 
 class F:
-    def __init__(self):
+    def __init__(self, type):
         self.name = None
         self.data = None
+        self.type = type
 
     def load(self):
-        with open(self.filename, "r") as f:
+        print("load " + self.name)
+        with open(self.name, "r") as f:
             self.data = json.load(f)
 
 # 线性映射
@@ -40,8 +42,8 @@ def mix(r1, g1, b1, a1, r2, g2, b2, a2):
 
 class Dvc:
     def __init__(self):
-        self.chc = F()
-        self.tr = F()
+        self.chc_ = F("chc")
+        self.tr_ = F("tr")
     
     def dvc(self):
         while True:
@@ -58,12 +60,12 @@ class Dvc:
                 print(help)
     
     def chc(self, name):
-        self.chc.name = "chc/" + name + ".json"
-        self.chc.load()
+        self.chc_.name = "chc/" + name + ".json"
+        self.chc_.load()
 
     def tr(self, name):
-        self.tr.name = "tr/" + name + ".json"
-        self.tr.load()
+        self.tr_.name = "tr/" + name + ".json"
+        self.tr_.load()
 
     def output(self, name):
         block_pixels = [[[[[[0, 0, 0, 0] for u in range(13)] for v in range(13)] for x in range(4)] for y in range(4)] for z in range(4)]
@@ -72,8 +74,8 @@ class Dvc:
         for z in range(4):
             for y in range(4):
                 for x in range(4):
-                    if self.tr.data[z][y][x] != 0:
-                        ch = self.chc.data[self.tr.data[z][y][x]]
+                    if self.tr_.data[z][y][x] != 0:
+                        ch = self.chc_.data[self.tr_.data[z][y][x]]
                         block_pixels[z][y][x] = copy.deepcopy(ch)
 
         m = None
@@ -93,5 +95,5 @@ class Dvc:
         image = Image.frombytes('RGBA', (49, 49), bytes([channel for row in graph for pixel in row for channel in pixel]))
         image.save(name + ".png")
 
-
-
+laer = Dvc()
+laer.dvc()
