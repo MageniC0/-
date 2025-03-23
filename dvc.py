@@ -3,10 +3,12 @@ import json
 from PIL import Image
 
 help = '''[help]
+输入指令以执行操作。
+按下回车键以执行。
 chc [name] : 指定资源包
 tr [name] : 指定地图
 output [name] : 制作
-按下回车键以退出
+在空行按下回车键以退出。
 '''
 
 class F:
@@ -39,31 +41,28 @@ class Dvc:
     def __init__(self):
         self.chc = F()
         self.tr = F()
+    
+    def dvc(self):
+        while True:
+            ln = input("_")
+            if ln == "":
+                break
+            elif cmd := re.match(r"chc (\w+)", ln):
+                self.chc(cmd.group(1))
+            elif cmd := re.match(r"tr (\w+)", ln):
+                self.tr(cmd.group(1))
+            elif cmd := re.match(r"output (\w+)", ln):
+                self.output(cmd.group(1))
+            else:
+                print(help)
+    
+    def chc(name):
+        print(f"chc for {name}")
+    
+    def tr(name):
+        print(f"tr for {name}")
 
-def chc(name):
-    print(f"chc for {name}")
-    # 导入chc
-
-def tr(name):
-    print(f"tr for {name}")
-    # 导入tr
-
-def output(name):
-    print(f"output for {name}")
-    # 生成block_pixels
-    # 生成graph
-    # 导出
+    def output(name):
+        print(f"output for {name}")
 
 
-while True:
-    ln = input("_")
-    if ln == "":
-        break
-    elif cmd := re.match(r"chc (\w+)", ln):
-        chc(cmd.group(1))
-    elif cmd := re.match(r"tr (\w+)", ln):
-        tr(cmd.group(1))
-    elif cmd := re.match(r"output (\w+)", ln):
-        output(cmd.group(1))
-    else:
-        print(help)
