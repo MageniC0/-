@@ -1,6 +1,7 @@
 import re
 import json
 from PIL import Image
+import copy
 
 help = '''[help]
 输入指令以执行操作。
@@ -16,7 +17,7 @@ class F:
         self.name = None
         self.data = None
 
-    def open_file(self):
+    def load(self):
         with open(self.filename, "r") as f:
             self.data = json.load(f)
 
@@ -56,13 +57,41 @@ class Dvc:
             else:
                 print(help)
     
-    def chc(name):
-        print(f"chc for {name}")
-    
-    def tr(name):
-        print(f"tr for {name}")
+    def chc(self, name):
+        self.chc.name = "chc/" + name + ".json"
+        self.chc.load()
 
-    def output(name):
-        print(f"output for {name}")
+    def tr(self, name):
+        self.tr.name = "tr/" + name + ".json"
+        self.tr.load()
+
+    def output(self, name):
+        block_pixels = [[[[[[0, 0, 0, 0] for u in range(13)] for v in range(13)] for x in range(4)] for y in range(4)] for z in range(4)]
+        graph = [[[0, 0, 0, 0] for i in range(49)] for j in range(49)]
+
+        for z in range(4):
+            for y in range(4):
+                for x in range(4):
+                    if self.tr.data[z][y][x] != 0:
+                        ch = self.chc.data[self.tr.data[z][y][x]]
+                        block_pixels[z][y][x] = copy.deepcopy(ch)
+
+        m = None
+        n = None
+        for z in range(4):
+            for y in range(4):
+                for x in range(4):
+                    m, n = pos(x, y, z)
+                    for j in range(13):
+                        for i in range(13):
+                            for k in range(4):
+                                pixel1 = block_pixels[z][y][x][j][i]
+                                pixel2 = graph[n + j][m + i]
+                                mixed_pixel = mix(pixel1[0], pixel1[1], pixel1[2], pixel1[3], pixel2[0], pixel2[1], pixel2[2], pixel2[3])
+                                graph[n + j][m + i] = mixed_pixel
+
+        image = Image.frombytes('RGBA', (49, 49), bytes([channel for row in graph for pixel in row for channel in pixel]))
+        image.save(name + ".png")
+
 
 
