@@ -94,6 +94,7 @@ class Dvc:
 
         image = Image.frombytes('RGBA', (49, 49), bytes([channel for row in graph for pixel in row for channel in pixel]))
         image.save(name + ".png")
+        print("done.")
 
 laer = Dvc()
 laer.dvc()
